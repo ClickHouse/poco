@@ -27,7 +27,7 @@ const std::string URI::RESERVED_PATH        = "?#";
 const std::string URI::RESERVED_QUERY       = "?#/:;+@";
 const std::string URI::RESERVED_QUERY_PARAM = "?#/:;+@&=";
 const std::string URI::RESERVED_FRAGMENT    = "";
-const std::string URI::ILLEGAL              = "%<>{}|\\\"^`!*'()$,[]";
+const std::string URI::ILLEGAL              = "%<>{}|\\\"^`!*'()$[]";
 
 
 URI::URI():
@@ -794,7 +794,7 @@ void URI::parseHostAndPort(std::string::const_iterator& it, const std::string::c
 	{
 		++it;
 		std::string port;
-		while (it != end) port += *it++;
+		while (it != end && *it != ',') port += *it++;
 		if (!port.empty())
 		{
 			int nport = 0;
