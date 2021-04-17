@@ -720,8 +720,8 @@ unsigned short URI::getWellKnownPort() const
 void URI::parse(const std::string& uri)
 {
 	std::for_each(uri.begin(), uri.end(), [] (char ch) {
-		if (static_cast<signed char>(ch) <= 32 || ch == '\x7F')
-			throw URISyntaxException("URI contains invalid characters");
+		if ((!std::isspace(ch) && static_cast<signed char>(ch) <= 32) || (ch == '\x7F'))
+			throw URISyntaxException("URI contains invalid characters: " + ch);
 	});
 
 	std::string::const_iterator it  = uri.begin();
