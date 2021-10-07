@@ -301,7 +301,6 @@ public:
 		Poco::Buffer<char> buffer(4096);
 		while (!_stopped.load(std::memory_order_relaxed))
 		{
-			fd_set fds;
 			FD_ZERO(&fds);
 			FD_SET(_fd, &fds);
 
@@ -376,6 +375,7 @@ public:
 
 private:
 	int _fd;
+	fd_set fds;
 	std::atomic<bool> _stopped;
 };
 
