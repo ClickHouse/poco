@@ -299,8 +299,8 @@ public:
 		}
 		
 		Poco::Buffer<char> buffer(4096);
-		while (!_stopped.load(std::memory_order_relaxed))
-		{
+        while (!_stopped)
+        {
 			FD_ZERO(&fds);
 			FD_SET(_fd, &fds);
 
@@ -365,7 +365,7 @@ public:
 	
 	void stop()
 	{
-		_stopped.store(true, std::memory_order_relaxed);
+		_stopped = true;
 	}
 	
 	bool supportsMoveEvents() const
