@@ -185,12 +185,12 @@ private:
 	DirectoryWatcher(const DirectoryWatcher&);
 	DirectoryWatcher& operator = (const DirectoryWatcher&);
 
-	Thread _thread;
 	File _directory;
 	int _eventMask;
 	AtomicCounter _eventsSuspended;
 	int _scanInterval;
 	std::shared_ptr<DirectoryWatcherStrategy> _pStrategy;
+	Thread _thread;
 };
 
 
