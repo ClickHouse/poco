@@ -299,6 +299,7 @@ public:
 		}
 		
 		Poco::Buffer<char> buffer(4096);
+		fd_set fds;
 		while (!_stopped)
 		{
 			FD_ZERO(&fds);
@@ -375,7 +376,6 @@ public:
 
 private:
 	int _fd;
-	fd_set fds;
 	std::atomic<bool> _stopped;
 };
 
