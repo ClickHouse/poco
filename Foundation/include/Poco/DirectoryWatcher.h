@@ -30,7 +30,7 @@
 #include "Poco/Thread.h"
 #include "Poco/AtomicCounter.h"
 
-#    include <memory>
+#include <memory>
 
 namespace Poco {
 
@@ -190,7 +190,7 @@ private:
 	int _eventMask;
 	AtomicCounter _eventsSuspended;
 	int _scanInterval;
-    std::shared_ptr<DirectoryWatcherStrategy> _pStrategy;
+	std::shared_ptr<DirectoryWatcherStrategy> _pStrategy;
 };
 
 

@@ -299,8 +299,8 @@ public:
 		}
 		
 		Poco::Buffer<char> buffer(4096);
-        while (!_stopped)
-        {
+		while (!_stopped)
+		{
 			FD_ZERO(&fds);
 			FD_SET(_fd, &fds);
 
@@ -570,14 +570,14 @@ void DirectoryWatcher::init()
 		throw Poco::InvalidArgumentException("not a directory", _directory.path());
 
 #if POCO_OS == POCO_OS_WINDOWS_NT
-    _pStrategy = std::make_shared<WindowsDirectoryWatcherStrategy>(*this);
-#    elif POCO_OS == POCO_OS_LINUX || POCO_OS == POCO_OS_ANDROID
-    _pStrategy = std::make_shared<LinuxDirectoryWatcherStrategy>(*this);
-#    elif POCO_OS == POCO_OS_MAC_OS_X || POCO_OS == POCO_OS_FREE_BSD
-    _pStrategy = std::make_shared<BSDDirectoryWatcherStrategy>(*this);
-#    else
-    _pStrategy = std::make_shared<PollingDirectoryWatcherStrategy>(*this);
-#    endif
+	_pStrategy = std::make_shared<WindowsDirectoryWatcherStrategy>(*this);
+#elif POCO_OS == POCO_OS_LINUX || POCO_OS == POCO_OS_ANDROID
+	_pStrategy = std::make_shared<LinuxDirectoryWatcherStrategy>(*this);
+#elif POCO_OS == POCO_OS_MAC_OS_X || POCO_OS == POCO_OS_FREE_BSD
+	_pStrategy = std::make_shared<BSDDirectoryWatcherStrategy>(*this);
+#else
+	_pStrategy = std::make_shared<PollingDirectoryWatcherStrategy>(*this);
+#endif
 	_thread.start(*this);
 }
 
