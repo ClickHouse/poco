@@ -356,7 +356,7 @@ protected:
 	static bool parseBool(const std::string& value);
 	void setRawWithEvent(const std::string& key, std::string value);
 	
-	virtual ~AbstractConfiguration();
+	~AbstractConfiguration();
 
 private:
 	std::string internalExpand(const std::string& value) const;
