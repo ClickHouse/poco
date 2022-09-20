@@ -131,6 +131,9 @@ public:
 	Poco::UInt16 getPort() const;
 		/// Returns the port number of the target HTTP server.
 
+	std::string getResolvedAddress() const;
+		/// Returns the resolved host name and port of the target HTTP server.
+
 	void setProxy(const std::string& host, Poco::UInt16 port = HTTPSession::HTTP_PORT, const std::string& protocol = "http", bool tunnel = true);
 		/// Sets the proxy host name, port number, protocol (http or https) and tunnel behaviour.
 
@@ -354,6 +357,13 @@ private:
 //
 // inlines
 //
+
+inline std::string HTTPClientSession::getResolvedAddress() const
+{
+	return (_resolved_host.empty() ? _host : _resolved_host) + ':' + std::to_string(_port);
+}
+
+
 inline const std::string& HTTPClientSession::getHost() const
 {
 	return _host;
