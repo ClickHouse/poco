@@ -90,7 +90,7 @@ public:
 		/// Returns the address of the MongoDB server.
 
     	std::string uri() const;
-        /// Returns the uri on which the connection was made.
+        	/// Returns the uri on which the connection was made.
 
 	void connect(const std::string& hostAndPort);
 		/// Connects to the given MongoDB server.
