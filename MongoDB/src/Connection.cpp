@@ -234,7 +234,8 @@ void Connection::connect(const std::string& uri, SocketFactory& socketFactory)
         }
     }
 
-    for (std::vector<std::string>::const_iterator it = strAddresses.cbegin(); it != strAddresses.cend(); ++it){
+    for (std::vector<std::string>::const_iterator it = strAddresses.cbegin();it != strAddresses.cend(); ++it)
+    {
         newURI = *it;
         Poco::URI theURI(newURI);
 
@@ -249,50 +250,49 @@ void Connection::connect(const std::string& uri, SocketFactory& socketFactory)
             _socket.setSendTimeout(socketTimeout);
             _socket.setReceiveTimeout(socketTimeout);
         }
-        if (!userInfo.empty())
+        if (strAddresses.size() > 1)
         {
-            std::string username;
-            std::string password;
-            std::string::size_type pos = userInfo.find(':');
-            if (pos != std::string::npos)
-            {
-                username.assign(userInfo, 0, pos++);
-                password.assign(userInfo, pos, userInfo.size() - pos);
-            }
-            else username = userInfo;
+            Poco::MongoDB::QueryRequest request("admin.$cmd");
+            request.setNumberToReturn(1);
+            request.selector().add("isMaster", 1);
+            Poco::MongoDB::ResponseMessage response;
 
-            Database database(databaseName);
-
-            if (database.authenticate(*this, username, password, authMechanism))
+            sendRequest(request, response);
+            _uri = newURI;
+            if (!response.documents().empty())
             {
-                if (strAddresses.size() > 1)
+                Poco::MongoDB::Document::Ptr doc = response.documents()[0];
+                if (doc->get<bool>("ismaster") && readPreference == "primary")
                 {
-                    Poco::MongoDB::QueryRequest request("admin.$cmd");
-                    request.setNumberToReturn(1);
-                    request.selector().add("isMaster", 1);
-                    Poco::MongoDB::ResponseMessage response;
-
-                    sendRequest(request, response);
-                    _uri = newURI;
-                    if (!response.documents().empty())
-                    {
-                        Poco::MongoDB::Document::Ptr doc = response.documents()[0];
-                        if (doc->get<bool>("ismaster") && readPreference == "primary")
-                        {
-                            break;
-                        }
-                        else if (!doc->get<bool>("ismaster") && readPreference == "secondary")
-                        {
-                            break;
-                        }
-                    }
+                    break;
+                }
+                else if (!doc->get<bool>("ismaster") && readPreference == "secondary")
+                {
+                    break;
+                }
+                else if (it + 1 == strAddresses.cend())
+                {
+                    throw Poco::URISyntaxException(uri);
                 }
             }
-            else
-            {
-                throw Poco::NoPermissionException(Poco::format("Access to MongoDB database %s denied for user %s", databaseName, username));
-            }
         }
+    }
+    if (!userInfo.empty())
+    {
+        std::string username;
+        std::string password;
+        std::string::size_type pos = userInfo.find(':');
+        if (pos != std::string::npos)
+        {
+            username.assign(userInfo, 0, pos++);
+            password.assign(userInfo, pos, userInfo.size() - pos);
+        }
+        else username = userInfo;
+
+        Database database(databaseName);
+
+        if (!database.authenticate(*this, username, password, authMechanism))
+            throw Poco::NoPermissionException(Poco::format("Access to MongoDB database %s denied for user %s", databaseName, username));
     }
 }
 
